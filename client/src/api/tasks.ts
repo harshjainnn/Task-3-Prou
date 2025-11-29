@@ -32,8 +32,11 @@ export const updateTask = async (
   return response.data;
 };
 
+export const deleteTask = async (id: number): Promise<void> => {
+  await apiClient.delete(`/tasks/${id}`);
+};
+
 export const fetchDashboard = async (): Promise<DashboardStats> => {
   const response = await apiClient.get('/dashboard');
   return response.data;
 };
-

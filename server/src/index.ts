@@ -98,6 +98,21 @@ app.put('/tasks/:id', async (req: Request, res: Response) => {
   }
 });
 
+// Delete a task
+app.delete('/tasks/:id', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    await prisma.task.delete({
+      where: { id: parseInt(id) },
+    });
+
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete task' });
+  }
+});
+
 // Dashboard summary
 app.get('/dashboard', async (req: Request, res: Response) => {
   try {
@@ -122,4 +137,3 @@ app.get('/dashboard', async (req: Request, res: Response) => {
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
-

@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { updateTask } from '../api/tasks';
+import { updateTask, deleteTask } from '../api/tasks';
 import { Task } from '../api/types';
 
 interface Props {
@@ -9,7 +9,7 @@ interface Props {
 export default function TaskList({ tasks }: Props) {
   const queryClient = useQueryClient();
 
-  const mutation = useMutation({
+  const updateMutation = useMutation({
     mutationFn: ({ id, updates }: { id: number; updates: { status?: string } }) =>
       updateTask(id, updates),
     onSuccess: () => {
@@ -18,8 +18,22 @@ export default function TaskList({ tasks }: Props) {
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => deleteTask(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+    },
+  });
+
   const handleStatusChange = (taskId: number, newStatus: string) => {
-    mutation.mutate({ id: taskId, updates: { status: newStatus } });
+    updateMutation.mutate({ id: taskId, updates: { status: newStatus } });
+  };
+
+  const handleDelete = (taskId: number) => {
+    if (window.confirm('Are you sure you want to delete this task?')) {
+      deleteMutation.mutate(taskId);
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -56,17 +70,24 @@ export default function TaskList({ tasks }: Props) {
                 </div>
                 <p className="mt-1 text-sm text-gray-500">Assigned to: {task.employee.name}</p>
               </div>
-              <div className="ml-4">
+              <div className="ml-4 flex items-center gap-2">
                 <select
                   value={task.status}
                   onChange={(e: React.ChangeEvent<HTMLSelectElement>) => handleStatusChange(task.id, e.target.value)}
                   className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                  disabled={mutation.isPending}
+                  disabled={updateMutation.isPending || deleteMutation.isPending}
                 >
                   <option value="pending">Pending</option>
                   <option value="in-progress">In Progress</option>
                   <option value="completed">Completed</option>
                 </select>
+                <button
+                  onClick={() => handleDelete(task.id)}
+                  disabled={updateMutation.isPending || deleteMutation.isPending}
+                  className="ml-2 inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Delete
+                </button>
               </div>
             </div>
           </li>
@@ -75,4 +96,3 @@ export default function TaskList({ tasks }: Props) {
     </div>
   );
 }
-
