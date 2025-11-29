@@ -199,7 +199,21 @@ VITE_API_URL=http://localhost:4000
 
 ## Screenshots
 
-*Note: Screenshots can be added here after running the application*
+### Dashboard
+![Dashboard](./images/dashboard.png)
+
+### Add New Task
+![Add New Task](./images/addingnewtask.png)
+
+### All Tasks List
+![All Tasks](./images/listofalltasks.png)
+
+### Create New Task Page
+![New Task](./images/newtask.png)
+
+### Result / Output Page
+![Result]("./images/result.png")
+
 
 ## License
 
