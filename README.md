@@ -212,7 +212,7 @@ VITE_API_URL=http://localhost:4000
 ![New Task](./images/newtask.png)
 
 ### Result / Output Page
-![Result]("./images/result.png")
+![Result](./images/result.png)
 
 
 ## License
